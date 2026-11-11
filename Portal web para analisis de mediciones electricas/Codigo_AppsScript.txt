@@ -1,0 +1,62 @@
+function importarCSVsAutomaticamente() {
+  var idCarpeta = "13LFdrt6UkC_ySvhGWqZBLzv84-siUd9S"; 
+  var carpeta = DriveApp.getFolderById(idCarpeta);
+  var archivos = carpeta.getFilesByType(MimeType.CSV);
+  var hojaDatos = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var memoria = PropertiesService.getScriptProperties();
+
+  while (archivos.hasNext()) {
+    var archivo = archivos.next();
+    var nombreArchivo = archivo.getName();
+    
+    if (nombreArchivo.indexOf("_procesado") === -1) {
+      var fechaArchivo = archivo.getDateCreated();
+      var fechaSubidaStr = Utilities.formatDate(fechaArchivo, Session.getScriptTimeZone(), "dd/MM/yyyy");
+      
+      // 1. IDENTIFICAR LA CASA
+      var claveDia = "fecha_" + fechaSubidaStr;
+      var nombreCasa = memoria.getProperty(claveDia); 
+      
+      if (!nombreCasa) {
+        var ultimoIdGlobal = memoria.getProperty("ultimo_id_casa") || "0";
+        var nuevoId = parseInt(ultimoIdGlobal) + 1;
+        nombreCasa = "Casa_" + nuevoId;
+        memoria.setProperty(claveDia, nombreCasa);
+        memoria.setProperty("ultimo_id_casa", nuevoId.toString());
+      }
+
+      // 2. IDENTIFICAR EL ELECTRODOMÉSTICO (Contador interno de esa casa)
+      var claveContadorElectro = "cont_electro_" + nombreCasa;
+      var ultimoIdElectro = parseInt(memoria.getProperty(claveContadorElectro) || "0");
+      var nuevoIdElectro = ultimoIdElectro + 1;
+      var nombreElectro = "Electrodomestico_" + nuevoIdElectro;
+      
+      // Guardamos el nuevo conteo para esta casa específica
+      memoria.setProperty(claveContadorElectro, nuevoIdElectro.toString());
+
+      // 3. PROCESAR DATOS
+      var datosCsv = Utilities.parseCsv(archivo.getBlob().getDataAsString());
+      if (datosCsv.length > 0) { datosCsv.shift(); }
+      
+      var filasParaAgregar = [];
+      for (var j = 0; j < datosCsv.length; j++) {
+        var fila = datosCsv[j];
+        // Insertamos primero la Casa y luego el Electrodoméstico
+        fila.unshift(nombreElectro); 
+        fila.unshift(nombreCasa); 
+        filasParaAgregar.push(fila);
+      }
+      
+      if (filasParaAgregar.length > 0) {
+        var ultimaFila = hojaDatos.getLastRow();
+        hojaDatos.getRange(ultimaFila + 1, 1, filasParaAgregar.length, filasParaAgregar[0].length).setValues(filasParaAgregar);
+      }
+      
+      archivo.setName(nombreArchivo + "_procesado");
+    }
+  }
+}
+function resetearMemoria() {
+  PropertiesService.getScriptProperties().deleteAllProperties();
+  Logger.log("¡Memoria reseteada! La próxima vez empezará desde la Casa_1.");
+}

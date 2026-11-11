@@ -1,0 +1,3 @@
+En este repositorio se encuentra el código de AppsScript para la automatización de una plataforma web con fines educativos, orientada a la visualización y el análisis de mediciones de consumo eléctrico en entornos residenciales. Para lograr este propósito, se planteó desarrollar una interfaz interactiva que permita observar las mediciones y analizarlas de manera interactiva utilizando el ecosistema de Google.
+
+El enlace a la pagina web desarrollada es el siguiente: https://sites.google.com/view/portalconsumoelectrico/inicio?authuser=0
