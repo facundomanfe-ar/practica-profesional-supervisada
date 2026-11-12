@@ -8,5 +8,7 @@ Tambien se realizo la automatizacion y protocolo de comunicacion entre ESP32 y J
 
 ## "Cinta transportadora remotizada para su aplicación en visión artificial", proyecto IdeI UNGS - CONFEDI - Fundación YPF. 
 En este proyecto se coordino con un equipo multidisciplinario de estudiantes para llevar a cabo la automatización integral de la cinta. El trabajo en este repositorio abarca la programación del control y el diseño del protocolo de comunicación bidireccional entre microcontroladores ESP32 y placas NVIDIA Jetson, vinculando el control físico con los algoritmos de visión artificial.
+<img width="400" height="400" alt="Industrial Conveyor Lab Setup" src="https://github.com/user-attachments/assets/487bb748-bff6-48d6-90b0-b20925176190" />
+
 
 Director: Maximiliano E. Véliz
